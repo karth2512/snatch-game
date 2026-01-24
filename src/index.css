@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+@layer components {
+  .letter-tile {
+    @apply w-12 h-12 md:w-14 md:h-14 flex items-center justify-center
+           text-xl md:text-2xl font-bold rounded-lg
+           bg-game-letter border-2 border-game-letterBorder
+           shadow-md transition-all duration-200;
+  }
+
+  .word-chip {
+    @apply px-3 py-1.5 rounded-full text-sm font-semibold
+           transition-all duration-200 cursor-pointer
+           hover:scale-105 active:scale-95;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg
+           hover:bg-primary-700 active:bg-primary-800
+           transition-colors duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg
+           hover:bg-gray-300 active:bg-gray-400
+           transition-colors duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input-field {
+    @apply px-4 py-3 border-2 border-gray-300 rounded-lg
+           focus:border-primary-500 focus:outline-none
+           transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg p-6;
+  }
+}

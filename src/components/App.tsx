@@ -11,15 +11,18 @@ import { WaitingRoom } from "./WaitingRoom";
 import GameBoard from "./GameBoard";
 import GameOver from "./GameOver";
 
-/**
- * App - Main application component
- * Manages screen routing based on game state and player actions
- */
-function App() {
-  // Connection and game state
-  const [screen, setScreen] = useState<AppScreen>("lobby");
-  const [roomCode, setRoomCode] = useState<string | null>(null);
-  const [playerName, setPlayerName] = useState<string>("");
+// ----------------------------------------------------------------------------
+// GameContainer - Only mounted when we have a valid room code
+// ----------------------------------------------------------------------------
+
+interface GameContainerProps {
+  roomCode: string;
+  playerName: string;
+  onExit: () => void;
+}
+
+function GameContainer({ roomCode, playerName, onExit }: GameContainerProps) {
+  const [screen, setScreen] = useState<AppScreen>("waiting");
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [gameOverData, setGameOverData] = useState<GameOverData | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -87,14 +90,13 @@ function App() {
   const handleError = useCallback((payload: { code: string; message: string }) => {
     if (payload.code === "ROOM_FULL") {
       setConnectionError("This room is full. Please try a different room code.");
-      setScreen("lobby");
-      setRoomCode(null);
+      onExit();
     } else if (payload.code === "RATE_LIMITED") {
       setClaimError("Too many attempts, please slow down");
     } else {
       setClaimError(payload.message);
     }
-  }, []);
+  }, [onExit]);
 
   const handleGameOver = useCallback((payload: GameOverData) => {
     setGameOverData(payload);
@@ -102,16 +104,16 @@ function App() {
   }, []);
 
   const handleConnectionChange = useCallback((connected: boolean) => {
-    if (!connected && screen !== "lobby") {
+    if (!connected) {
       setConnectionError("Connection lost. Attempting to reconnect...");
-    } else if (connected) {
+    } else {
       setConnectionError(null);
     }
-  }, [screen]);
+  }, []);
 
-  // Initialize socket hook only when we have a room code
+  // Initialize socket - roomCode is guaranteed to be valid here
   const socket = useGameSocket({
-    roomCode: roomCode || "",
+    roomCode,
     onJoined: handleJoined,
     onStateUpdate: handleStateUpdate,
     onClaimResult: handleClaimResult,
@@ -120,29 +122,12 @@ function App() {
     onConnectionChange: handleConnectionChange,
   });
 
-  // Auto-join when room code is set
+  // Auto-join when connected
   useEffect(() => {
-    if (roomCode && playerName && socket.connected && !socket.playerId) {
+    if (playerName && socket.connected && !socket.playerId) {
       socket.join(playerName);
     }
-  }, [roomCode, playerName, socket.connected, socket.playerId, socket]);
-
-  // Lobby handlers
-  const handleCreateGame = useCallback((newRoomCode: string, name: string) => {
-    setRoomCode(newRoomCode);
-    setPlayerName(name);
-    setIsReady(false);
-    setGameOverData(null);
-    setConnectionError(null);
-  }, []);
-
-  const handleJoinGame = useCallback((code: string, name: string) => {
-    setRoomCode(code);
-    setPlayerName(name);
-    setIsReady(false);
-    setGameOverData(null);
-    setConnectionError(null);
-  }, []);
+  }, [playerName, socket.connected, socket.playerId, socket]);
 
   // Waiting room handlers
   const handleReady = useCallback(() => {
@@ -174,28 +159,12 @@ function App() {
 
   const handleExit = useCallback(() => {
     socket.leave();
-    setScreen("lobby");
-    setRoomCode(null);
-    setPlayerName("");
-    setGameState(null);
-    setGameOverData(null);
-    setIsReady(false);
-    setClaimError(null);
-    setClaimSuccess(null);
-    setConnectionError(null);
-  }, [socket]);
+    onExit();
+  }, [socket, onExit]);
 
   // Render current screen
   const renderScreen = () => {
     switch (screen) {
-      case "lobby":
-        return (
-          <Lobby
-            onCreateGame={handleCreateGame}
-            onJoinGame={handleJoinGame}
-          />
-        );
-
       case "waiting":
         if (!gameState || !socket.playerId) {
           return (
@@ -266,6 +235,48 @@ function App() {
 
       {renderScreen()}
     </div>
+  );
+}
+
+// ----------------------------------------------------------------------------
+// App - Main entry point, shows Lobby until room code is set
+// ----------------------------------------------------------------------------
+
+function App() {
+  const [roomCode, setRoomCode] = useState<string | null>(null);
+  const [playerName, setPlayerName] = useState<string>("");
+
+  const handleCreateGame = useCallback((newRoomCode: string, name: string) => {
+    setRoomCode(newRoomCode);
+    setPlayerName(name);
+  }, []);
+
+  const handleJoinGame = useCallback((code: string, name: string) => {
+    setRoomCode(code);
+    setPlayerName(name);
+  }, []);
+
+  const handleExit = useCallback(() => {
+    setRoomCode(null);
+    setPlayerName("");
+  }, []);
+
+  // Show Lobby when no room code, otherwise show GameContainer
+  if (!roomCode) {
+    return (
+      <Lobby
+        onCreateGame={handleCreateGame}
+        onJoinGame={handleJoinGame}
+      />
+    );
+  }
+
+  return (
+    <GameContainer
+      roomCode={roomCode}
+      playerName={playerName}
+      onExit={handleExit}
+    />
   );
 }
 

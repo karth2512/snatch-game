@@ -3,13 +3,12 @@
 // DESCRIPTION: Main game view container component
 // ============================================================================
 
-import { useState, useCallback, useMemo, useEffect, memo } from "react";
+import { useState, useMemo, useEffect, memo } from "react";
 import type { GameState } from "../types";
 import { TOTAL_LETTERS } from "../utils/constants";
 import OpenLetters from "./OpenLetters";
 import PlayerPanel from "./PlayerPanel";
 import ClaimInput from "./ClaimInput";
-import StealModal from "./StealModal";
 
 interface GameBoardProps {
   gameState: GameState;
@@ -32,8 +31,6 @@ const GameBoard = memo(function GameBoard({
   claimError,
   claimSuccess,
 }: GameBoardProps) {
-  const [isStealModalOpen, setIsStealModalOpen] = useState(false);
-  const [stealError, setStealError] = useState<string | null>(null);
   const [newLetterIndex, setNewLetterIndex] = useState<number | null>(null);
   const [finalCountdown, setFinalCountdown] = useState<number | null>(null);
 
@@ -74,46 +71,6 @@ const GameBoard = memo(function GameBoard({
     return { currentPlayer: current, opponents: opps };
   }, [gameState.players, playerId]);
 
-  // Check if there are words to steal
-  const hasStealableWords = useMemo(() => {
-    return opponents.some((opp) => opp.words.length > 0);
-  }, [opponents]);
-
-  // Handle steal modal
-  const handleStealClick = useCallback(() => {
-    setStealError(null);
-    setIsStealModalOpen(true);
-  }, []);
-
-  const handleStealClose = useCallback(() => {
-    setIsStealModalOpen(false);
-    setStealError(null);
-  }, []);
-
-  const handleSteal = useCallback(
-    (word: string, targetWord: string, targetPlayerId: string) => {
-      setStealError(null);
-      onSteal(word, targetWord, targetPlayerId);
-      // The modal will close on success (when gameState updates)
-      // or show error on failure
-    },
-    [onSteal]
-  );
-
-  // Update steal error from claimError when in steal modal
-  useEffect(() => {
-    if (isStealModalOpen && claimError) {
-      setStealError(claimError);
-    }
-  }, [isStealModalOpen, claimError]);
-
-  // Close steal modal on successful steal
-  useEffect(() => {
-    if (isStealModalOpen && claimSuccess) {
-      setIsStealModalOpen(false);
-      setStealError(null);
-    }
-  }, [isStealModalOpen, claimSuccess]);
 
   // Get phase display text
   const getPhaseDisplay = () => {
@@ -229,14 +186,6 @@ const GameBoard = memo(function GameBoard({
               key={opponent.id}
               player={opponent}
               isCurrentPlayer={false}
-              onWordClick={
-                !isInputDisabled
-                  ? () => {
-                      setStealError(null);
-                      setIsStealModalOpen(true);
-                    }
-                  : undefined
-              }
             />
           ))}
           {opponents.length === 0 && (
@@ -251,23 +200,15 @@ const GameBoard = memo(function GameBoard({
       <footer className="bg-white shadow-t border-t py-4 px-4">
         <ClaimInput
           onClaim={onClaim}
-          onStealClick={handleStealClick}
+          onSteal={onSteal}
           disabled={isInputDisabled}
-          error={!isStealModalOpen ? claimError : null}
-          success={!isStealModalOpen ? claimSuccess : null}
-          hasStealableWords={hasStealableWords}
+          error={claimError}
+          success={claimSuccess}
+          opponents={opponents}
+          openLetters={gameState.openLetters}
         />
       </footer>
 
-      {/* Steal Modal */}
-      <StealModal
-        isOpen={isStealModalOpen}
-        onClose={handleStealClose}
-        onSteal={handleSteal}
-        opponents={opponents}
-        openLetters={gameState.openLetters}
-        error={stealError}
-      />
     </div>
   );
 });

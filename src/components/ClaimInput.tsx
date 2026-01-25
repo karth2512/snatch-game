@@ -5,14 +5,17 @@
 
 import { useState, useCallback, useRef, useEffect, memo, FormEvent, KeyboardEvent } from "react";
 import { MIN_WORD_LENGTH } from "../utils/constants";
+import { findStealTarget } from "../utils/steal-detection";
+import type { Player } from "../types";
 
 interface ClaimInputProps {
   onClaim: (word: string) => void;
-  onStealClick: () => void;
+  onSteal: (word: string, targetWord: string, targetPlayerId: string) => void;
   disabled?: boolean;
   error?: string | null;
   success?: string | null;
-  hasStealableWords: boolean;
+  opponents: Player[];
+  openLetters: string[];
 }
 
 /**
@@ -21,11 +24,12 @@ interface ClaimInputProps {
  */
 const ClaimInput = memo(function ClaimInput({
   onClaim,
-  onStealClick,
+  onSteal,
   disabled = false,
   error,
   success,
-  hasStealableWords,
+  opponents,
+  openLetters,
 }: ClaimInputProps) {
   const [word, setWord] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,9 +65,19 @@ const ClaimInput = memo(function ClaimInput({
       }
 
       setIsSubmitting(true);
-      onClaim(trimmedWord);
+
+      // Check if this word can be formed by stealing from an opponent
+      const stealTarget = findStealTarget(trimmedWord, opponents, openLetters);
+
+      if (stealTarget) {
+        // Automatically steal from the opponent
+        onSteal(trimmedWord, stealTarget.targetWord, stealTarget.targetPlayerId);
+      } else {
+        // Claim from open letters
+        onClaim(trimmedWord);
+      }
     },
-    [word, disabled, isSubmitting, onClaim]
+    [word, disabled, isSubmitting, onClaim, onSteal, opponents, openLetters]
   );
 
   const handleKeyDown = useCallback(
@@ -122,24 +136,6 @@ const ClaimInput = memo(function ClaimInput({
           </button>
         </div>
 
-        {/* Steal Button Row */}
-        {hasStealableWords && (
-          <button
-            type="button"
-            onClick={onStealClick}
-            disabled={disabled}
-            className={`
-              w-full px-4 py-2 font-medium rounded-lg transition-all
-              ${disabled
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-purple-100 hover:bg-purple-200 text-purple-800 border border-purple-300"
-              }
-            `}
-          >
-            Steal a Word
-          </button>
-        )}
-
         {/* Feedback Messages */}
         {error && (
           <div className="px-4 py-2 bg-red-100 text-red-800 rounded-lg text-sm font-medium animate-fade-in">
@@ -155,7 +151,7 @@ const ClaimInput = memo(function ClaimInput({
 
         {/* Helper Text */}
         <p className="text-center text-xs text-gray-500">
-          Type a word using the open letters (minimum {MIN_WORD_LENGTH} letters)
+          Type a word (minimum {MIN_WORD_LENGTH} letters) - will auto-steal if possible
         </p>
       </form>
     </div>

@@ -16,6 +16,7 @@ interface ClaimInputProps {
   success?: string | null;
   opponents: Player[];
   openLetters: string[];
+  usedWords: string[];
 }
 
 /**
@@ -30,6 +31,7 @@ const ClaimInput = memo(function ClaimInput({
   success,
   opponents,
   openLetters,
+  usedWords,
 }: ClaimInputProps) {
   const [word, setWord] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,7 +69,7 @@ const ClaimInput = memo(function ClaimInput({
       setIsSubmitting(true);
 
       // Check if this word can be formed by stealing from an opponent
-      const stealTarget = findStealTarget(trimmedWord, opponents, openLetters);
+      const stealTarget = findStealTarget(trimmedWord, opponents, openLetters, usedWords);
 
       if (stealTarget) {
         // Automatically steal from the opponent
@@ -77,7 +79,7 @@ const ClaimInput = memo(function ClaimInput({
         onClaim(trimmedWord);
       }
     },
-    [word, disabled, isSubmitting, onClaim, onSteal, opponents, openLetters]
+    [word, disabled, isSubmitting, onClaim, onSteal, opponents, openLetters, usedWords]
   );
 
   const handleKeyDown = useCallback(

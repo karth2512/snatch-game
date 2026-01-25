@@ -25,6 +25,7 @@ export interface GameState {
   letterIntervalMs: number;
   finalRoundEndsAt: number | null;
   lastAction: LastAction | null;
+  usedWords: string[];
 }
 
 export type GamePhase =

@@ -33,7 +33,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_PARTYKIT_HOST: ${{ vars.PARTYKIT_HOST || 'your-partykit-host.partykit.dev' }}
+          VITE_PARTYKIT_HOST: ${{ vars.PARTYKIT_HOST || 'anagram-snatch-server.karth2512.partykit.dev' }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

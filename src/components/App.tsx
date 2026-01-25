@@ -4,7 +4,7 @@
 // ============================================================================
 
 import { useState, useCallback, useEffect } from "react";
-import type { GameState, AppScreen, GameOverData } from "../types";
+import type { GameState, AppScreen, GameOverData, LetterMessage } from "../types";
 import { useGameSocket } from "../hooks/useGameSocket";
 import { Lobby } from "./Lobby";
 import { WaitingRoom } from "./WaitingRoom";
@@ -111,11 +111,23 @@ function GameContainer({ roomCode, playerName, onExit }: GameContainerProps) {
     }
   }, []);
 
+  const handleLetter = useCallback((payload: LetterMessage["payload"]) => {
+    setGameState((prevState) => {
+      if (!prevState) return prevState;
+      return {
+        ...prevState,
+        openLetters: payload.openLetters,
+        lettersRemaining: payload.lettersRemaining,
+      };
+    });
+  }, []);
+
   // Initialize socket - roomCode is guaranteed to be valid here
   const socket = useGameSocket({
     roomCode,
     onJoined: handleJoined,
     onStateUpdate: handleStateUpdate,
+    onLetter: handleLetter,
     onClaimResult: handleClaimResult,
     onError: handleError,
     onGameOver: handleGameOver,

@@ -23,29 +23,66 @@ function getLetterCounts(word: string): Map<string, number> {
 }
 
 /**
+ * Gets the singular form of a word (removes trailing 'S')
+ */
+function getSingularForm(word: string): string {
+  const upper = word.toUpperCase();
+  if (upper.endsWith("S") && upper.length > 1) {
+    return upper.slice(0, -1);
+  }
+  return upper;
+}
+
+/**
+ * Gets the plural form of a word (adds trailing 'S')
+ */
+function getPluralForm(word: string): string {
+  return word.toUpperCase() + "S";
+}
+
+/**
+ * Checks if a word (or its singular/plural form) has already been used
+ *
+ * @param word - The word to check
+ * @param usedWords - List of words already used in the session
+ * @returns true if the word or its singular/plural variant has been used
+ */
+export function isDuplicateWord(word: string, usedWords: string[]): boolean {
+  const upperWord = word.toUpperCase();
+  const singular = getSingularForm(upperWord);
+  const plural = getPluralForm(singular);
+
+  const usedWordsUpper = usedWords.map((w) => w.toUpperCase());
+
+  return (
+    usedWordsUpper.includes(upperWord) ||
+    usedWordsUpper.includes(singular) ||
+    usedWordsUpper.includes(plural)
+  );
+}
+
+/**
  * Checks if a word can be formed by stealing from a target word using open letters.
  * Rules:
  * - Must use ALL letters from the target word
- * - Must add at least 1 letter from the open pool
+ * - If allowPureAnagram is false: must add at least 1 letter from the open pool
+ * - If allowPureAnagram is true: can be same length if it's a different arrangement
  * - The new word must be a rearrangement (not just appending)
  *
  * @param newWord - The word the player wants to form
  * @param targetWord - The word to steal from
  * @param openLetters - Available letters in the pool
+ * @param allowPureAnagram - If true, allows steals with 0 additional letters (default: true)
  * @returns true if the steal is valid
  */
 export function canStealWord(
   newWord: string,
   targetWord: string,
-  openLetters: string[]
+  openLetters: string[],
+  allowPureAnagram: boolean = true
 ): boolean {
   const newWordUpper = newWord.toUpperCase();
   const targetWordUpper = targetWord.toUpperCase();
-
-  // New word must be longer than target word (at least 1 letter from pool)
-  if (newWordUpper.length <= targetWordUpper.length) {
-    return false;
-  }
 
   // Get letter counts
   const newWordCounts = getLetterCounts(newWordUpper);
@@ -69,9 +106,25 @@ export function canStealWord(
     }
   }
 
-  // Must use at least 1 letter from open pool
+  // Handle pure anagram case (same length, different arrangement)
   if (remainingNeeded.size === 0) {
-    // This would mean no letters from pool are used - not valid
+    // No letters from pool needed - this is a pure anagram
+    if (!allowPureAnagram) {
+      return false;
+    }
+    // For pure anagrams: must be same length and different word
+    if (newWordUpper.length !== targetWordUpper.length) {
+      return false;
+    }
+    // Must be a different word (not the same word)
+    if (newWordUpper === targetWordUpper) {
+      return false;
+    }
+    return true;
+  }
+
+  // Standard steal: must be longer than target word
+  if (newWordUpper.length <= targetWordUpper.length) {
     return false;
   }
 
@@ -88,20 +141,33 @@ export function canStealWord(
 /**
  * Finds the best steal target for a given word.
  * Prioritizes stealing from opponents (returns the first valid match).
+ * For pure anagrams (same length), skips if the word has already been used.
  *
  * @param newWord - The word the player wants to form
  * @param opponents - List of opponent players
  * @param openLetters - Available letters in the pool
+ * @param usedWords - List of words already used in the session (for pure anagram checks)
  * @returns StealTarget if stealing is possible, null otherwise
  */
 export function findStealTarget(
   newWord: string,
   opponents: Player[],
-  openLetters: string[]
+  openLetters: string[],
+  usedWords: string[] = []
 ): StealTarget | null {
+  const newWordUpper = newWord.toUpperCase();
+
   for (const opponent of opponents) {
     for (const targetWord of opponent.words) {
-      if (canStealWord(newWord, targetWord, openLetters)) {
+      const targetWordUpper = targetWord.toUpperCase();
+      const isPureAnagram = newWordUpper.length === targetWordUpper.length;
+
+      // For pure anagrams, skip if the new word has already been used
+      if (isPureAnagram && isDuplicateWord(newWord, usedWords)) {
+        continue;
+      }
+
+      if (canStealWord(newWord, targetWord, openLetters, true)) {
         return {
           targetWord,
           targetPlayerId: opponent.id,

@@ -206,6 +206,7 @@ const GameBoard = memo(function GameBoard({
           success={claimSuccess}
           opponents={opponents}
           openLetters={gameState.openLetters}
+          usedWords={gameState.usedWords}
         />
       </footer>
 

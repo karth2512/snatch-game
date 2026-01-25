@@ -20,7 +20,7 @@ interface StealModalProps {
 /**
  * StealModal - Modal for selecting an opponent's word to steal
  * Player must select a target word and enter a new word that uses all
- * letters from the target plus at least one from the open pool
+ * letters from the target (plus optionally letters from the open pool)
  */
 const StealModal = memo(function StealModal({
   isOpen,
@@ -116,7 +116,7 @@ const StealModal = memo(function StealModal({
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
               Select a word to steal. You must form a new word using all its letters
-              plus at least one letter from the open pool.
+              (pure anagrams allowed, or add letters from the pool).
             </p>
 
             {stealableWords.length === 0 ? (
@@ -186,7 +186,7 @@ const StealModal = memo(function StealModal({
 
             <div>
               <label htmlFor="new-word" className="block text-sm font-medium text-gray-700 mb-1">
-                New word (must use ALL letters from "{selectedTarget.word}" + at least 1 from pool):
+                New word (must use ALL letters from "{selectedTarget.word}"):
               </label>
               <input
                 id="new-word"

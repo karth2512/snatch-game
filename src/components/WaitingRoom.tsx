@@ -45,7 +45,7 @@ export function WaitingRoom({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-indigo-900 via-purple-900 to-pink-800 p-4">
       <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20">
         <h1 className="text-3xl font-bold text-center text-white mb-6">
           Waiting Room
@@ -233,7 +233,7 @@ export function WaitingRoom({
               ? "bg-green-500/30 text-green-300 cursor-not-allowed border border-green-500/50"
               : waitingForOpponent
                 ? "bg-gray-500/30 text-gray-400 cursor-not-allowed border border-gray-500/30"
-                : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white transform hover:scale-[1.02] shadow-lg"
+                : "bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white transform hover:scale-[1.02] shadow-lg"
           }`}
         >
           {isReady ? "Ready!" : "I'm Ready"}

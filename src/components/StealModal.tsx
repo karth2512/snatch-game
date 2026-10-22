@@ -171,7 +171,7 @@ const StealModal = memo(function StealModal({
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Available letters in pool:
               </label>
-              <div className="flex flex-wrap gap-1 text-sm font-mono bg-gray-100 p-2 rounded">
+              <div className="flex flex-wrap gap-1 text-sm font-mono bg-gray-100 p-2 rounded-sm">
                 {openLetters.length > 0 ? (
                   openLetters.map((letter, idx) => (
                     <span key={idx} className="px-1">
@@ -201,7 +201,7 @@ const StealModal = memo(function StealModal({
                 className="w-full px-4 py-2 text-lg font-bold tracking-wider uppercase
                   rounded-lg border-2 border-gray-300
                   focus:border-purple-500 focus:ring-2 focus:ring-purple-200
-                  outline-none transition-all"
+                  outline-hidden transition-all"
               />
             </div>
 

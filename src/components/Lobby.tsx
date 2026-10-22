@@ -58,7 +58,7 @@ export function Lobby({ onCreateGame, onJoinGame }: LobbyProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-indigo-900 via-purple-900 to-pink-800 p-4">
       <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20">
         <h1 className="text-4xl font-bold text-center text-white mb-2">
           Anagram Snatch
@@ -71,13 +71,13 @@ export function Lobby({ onCreateGame, onJoinGame }: LobbyProps) {
           <div className="space-y-4">
             <button
               onClick={() => setMode("create")}
-              className="w-full py-4 px-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
+              className="w-full py-4 px-6 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
             >
               Create Game
             </button>
             <button
               onClick={() => setMode("join")}
-              className="w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
+              className="w-full py-4 px-6 bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
             >
               Join Game
             </button>
@@ -100,7 +100,7 @@ export function Lobby({ onCreateGame, onJoinGame }: LobbyProps) {
                 onChange={(e) => setPlayerName(e.target.value)}
                 placeholder="Enter your name"
                 maxLength={20}
-                className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-hidden focus:ring-2 focus:ring-white/50 focus:border-transparent"
                 autoFocus
               />
             </div>
@@ -120,7 +120,7 @@ export function Lobby({ onCreateGame, onJoinGame }: LobbyProps) {
                   onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                   placeholder="Enter 6-character code"
                   maxLength={6}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent uppercase tracking-widest text-center text-xl font-mono"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-hidden focus:ring-2 focus:ring-white/50 focus:border-transparent uppercase tracking-widest text-center text-xl font-mono"
                 />
               </div>
             )}
@@ -143,8 +143,8 @@ export function Lobby({ onCreateGame, onJoinGame }: LobbyProps) {
                 type="submit"
                 className={`flex-1 py-3 px-6 font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg ${
                   mode === "create"
-                    ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
-                    : "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
+                    ? "bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+                    : "bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
                 }`}
               >
                 {mode === "create" ? "Create" : "Join"}

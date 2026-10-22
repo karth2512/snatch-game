@@ -119,7 +119,7 @@ const ClaimInput = memo(function ClaimInput({
                 ? "bg-gray-100 border-gray-200 cursor-not-allowed"
                 : "border-gray-300 focus:border-game-accent focus:ring-2 focus:ring-game-accent/20"
               }
-              outline-none
+              outline-hidden
             `}
           />
 

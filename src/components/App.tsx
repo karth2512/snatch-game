@@ -180,7 +180,7 @@ function GameContainer({ roomCode, playerName, onExit }: GameContainerProps) {
       case "waiting":
         if (!gameState || !socket.playerId) {
           return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
+            <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-indigo-900 via-purple-900 to-pink-800">
               <div className="text-white text-xl">Connecting...</div>
             </div>
           );

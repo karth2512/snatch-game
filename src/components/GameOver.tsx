@@ -52,7 +52,7 @@ const GameOver = memo(function GameOver({
         return {
           title: "You Won!",
           subtitle: "Congratulations!",
-          bgClass: "bg-gradient-to-br from-green-400 to-emerald-600",
+          bgClass: "bg-linear-to-br from-green-400 to-emerald-600",
           textClass: "text-white",
           iconEmoji: null,
         };
@@ -60,7 +60,7 @@ const GameOver = memo(function GameOver({
         return {
           title: `${winnerName} Wins`,
           subtitle: "Better luck next time!",
-          bgClass: "bg-gradient-to-br from-gray-400 to-gray-600",
+          bgClass: "bg-linear-to-br from-gray-400 to-gray-600",
           textClass: "text-white",
           iconEmoji: null,
         };
@@ -68,7 +68,7 @@ const GameOver = memo(function GameOver({
         return {
           title: "It's a Tie!",
           subtitle: "Well matched game!",
-          bgClass: "bg-gradient-to-br from-amber-400 to-yellow-600",
+          bgClass: "bg-linear-to-br from-amber-400 to-yellow-600",
           textClass: "text-white",
           iconEmoji: null,
         };

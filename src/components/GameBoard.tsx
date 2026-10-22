@@ -104,7 +104,7 @@ const GameBoard = memo(function GameBoard({
   return (
     <div className="min-h-screen bg-game-bg flex flex-col">
       {/* Header */}
-      <header className="bg-white shadow-sm py-3 px-4">
+      <header className="bg-white shadow-xs py-3 px-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-800">Anagram Snatch</h1>
 
@@ -157,7 +157,7 @@ const GameBoard = memo(function GameBoard({
       {/* Main Game Area */}
       <main className="flex-1 max-w-6xl mx-auto w-full p-4 flex flex-col lg:flex-row gap-4">
         {/* Left Panel - Current Player */}
-        <aside className="lg:w-64 flex-shrink-0">
+        <aside className="lg:w-64 shrink-0">
           <PlayerPanel
             player={currentPlayer}
             isCurrentPlayer={true}
@@ -180,7 +180,7 @@ const GameBoard = memo(function GameBoard({
         </section>
 
         {/* Right Panel - Opponents */}
-        <aside className="lg:w-64 flex-shrink-0 space-y-4">
+        <aside className="lg:w-64 shrink-0 space-y-4">
           {opponents.map((opponent) => (
             <PlayerPanel
               key={opponent.id}
